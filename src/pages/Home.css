@@ -22,6 +22,37 @@
   color: #fff;
 }
 
+.home-nav-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.btn-primary {
+  background: #646cff;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #535bf2;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
 .btn-sm {
   padding: 0.5rem 1.2rem;
   font-size: 0.85rem;

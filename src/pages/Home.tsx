@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import './Home.css';
 import { useState } from 'react';
 import CreateRoomModal from '../components/CreateRoomModal';
+import JoinPrivateRoomModal from '../components/JoinPrivateRoomModal';
 
 const MOCK_ROOMS = [
   { id: 'movie-night', title: 'Movie Night', host: 'Alice', viewers: 5, movie: 'Interstellar' },
@@ -14,6 +15,7 @@ const MOCK_ROOMS = [
 
 function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isJoinPrivateRoomModalOpen, setIsJoinPrivateRoomModalOpen] = useState(false);
 
   const handleCreateRoom = (roomName: string, movieName: string, isPrivate: boolean) => {
     console.log('Creating room:', { roomName, movieName, isPrivate });
@@ -30,8 +32,14 @@ function Home() {
     <div className="home">
       <nav className="home-nav">
         <Link to="/" className="home-nav-brand">drinkmilk.tv</Link>
-        <button className="btn btn-secondary btn-sm">Join Private Room</button>
-        <button onClick={() => setIsModalOpen(true)} className="btn btn-primary btn-sm">+ Create Room</button>
+        
+        <div className="home-nav-actions">
+                  <button onClick={() => setIsJoinPrivateRoomModalOpen(true)} className="btn btn-secondary btn-sm">Join Private Room</button>
+                  <button onClick={() => setIsModalOpen(true)} className="btn btn-primary btn-sm">+ Create Room</button>
+        </div>
+
+      
+      
       </nav>
 
       <main className="home-main">
@@ -64,6 +72,16 @@ function Home() {
         <CreateRoomModal
           onClose={handleCloseModal}
           onCreateRoom={handleCreateRoom}
+        />
+      )}
+
+      {isJoinPrivateRoomModalOpen && (
+        <JoinPrivateRoomModal
+          onClose={() => setIsJoinPrivateRoomModalOpen(false)}
+          onJoinRoom={(roomCode: string) => {
+            console.log('Joining private room:', roomCode);
+            setIsJoinPrivateRoomModalOpen(false);
+          }}
         />
       )}
     </div>
