@@ -1,5 +1,8 @@
-import { Link } from 'react-router-dom'
-import './Home.css'
+import { Link, useNavigate } from 'react-router-dom';
+import './Home.css';
+import { useState } from 'react';
+import CreateRoomModal from '../components/CreateRoomModal';
+import JoinPrivateRoomModal from '../components/JoinPrivateRoomModal';
 
 const MOCK_ROOMS = [
   { id: 'movie-night', title: 'Movie Night', host: 'Alice', viewers: 5, movie: 'Interstellar' },
@@ -10,12 +13,97 @@ const MOCK_ROOMS = [
   { id: 'date-night', title: 'Date Night', host: 'Frank', viewers: 2, movie: 'La La Land' },
 ]
 
+var roomData;
+
 function Home() {
+  const navigate = useNavigate();
+  
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [createRoomError, setCreateRoomError] = useState('');
+
+  const [isJoinPrivateRoomModalOpen, setIsJoinPrivateRoomModalOpen] = useState(false);
+  const [joinRoomError, setJoinRoomError] = useState('');
+
+  const handleCreateRoom = async (roomName: string, movieName: string, isPrivate: boolean) => {
+    
+    console.log('Creating room:', { roomName, movieName, isPrivate });
+
+    try {
+
+      const response = await fetch("https://imaginary.api/api/createRoom", { // imaginary api call.
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ roomName, movieName, isPrivate })
+      });
+      if (!response.ok) throw new Error('Failed to create room');
+
+      roomData = await response.json();
+
+      if (isPrivate) {
+        navigate(`/room/${roomName}?code=${roomData.roomCode}`)
+      } else {
+        navigate(`/room/${roomName}`);
+      }
+
+
+
+    setIsModalOpen(false);
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        setCreateRoomError('Request timed out. Please try again.');
+      } else {
+        setCreateRoomError('Failed to create room.');
+      }
+    }
+  };
+
+  const handleJoinPrivateRoom = async (roomCode: string) => {
+    
+    roomCode = roomCode.trim().toUpperCase();
+    
+    if (roomCode.length !== 6) {
+      setJoinRoomError('Invalid room code. Please enter a valid 6-character code.');
+      return;
+    } else if (!/^[A-Z0-9]{6}$/.test(roomCode)) {
+      setJoinRoomError('Room code can only contain uppercase letters and numbers.');
+      return;
+    }
+
+    try {
+      const response = await fetch("https://imaginary.api/api/joinPrivate", { // imaginary api call
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ roomCode })
+      });
+      if (!response.ok) throw new Error('Failed to join room');
+
+      navigate(`/room/${roomCode}`);
+      setIsJoinPrivateRoomModalOpen(false);
+    } catch(error: any) {
+      if (error.name === 'AbortError') {
+        setJoinRoomError('Request timed out. Please try again.');
+      } else {
+        setJoinRoomError('Failed to join room.');
+      }
+    }
+  };
+
   return (
     <div className="home">
       <nav className="home-nav">
         <Link to="/" className="home-nav-brand">drinkmilk.tv</Link>
-        <Link to="/room/new" className="btn btn-primary btn-sm">+ Create Room</Link>
+        
+        <div className="home-nav-actions">
+                  <button onClick={() => {
+                    setJoinRoomError('');
+                    setIsJoinPrivateRoomModalOpen(true);
+                  }} className="btn btn-secondary btn-sm">Join Private Room</button>
+                  <button onClick={() => setIsModalOpen(true)} className="btn btn-primary btn-sm">+ Create Room</button>
+        </div> 
       </nav>
 
       <main className="home-main">
@@ -43,6 +131,24 @@ function Home() {
           ))}
         </div>
       </main>
+
+      {isModalOpen && (
+        <CreateRoomModal
+          error={createRoomError}
+          onClose={() => setIsModalOpen(false)}
+          onCreateRoom={handleCreateRoom}
+        />
+      )}
+
+      {isJoinPrivateRoomModalOpen && (
+        <JoinPrivateRoomModal
+          error={joinRoomError}
+          onClose={() => setIsJoinPrivateRoomModalOpen(false)}
+          onJoinRoom={(roomCode: string) => {
+            handleJoinPrivateRoom(roomCode);
+          }}
+        />
+      )}
     </div>
   )
 }
