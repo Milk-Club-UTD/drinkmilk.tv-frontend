@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Home.css';
 import { useState } from 'react';
 import CreateRoomModal from '../components/CreateRoomModal';
@@ -14,18 +14,48 @@ const MOCK_ROOMS = [
 ]
 
 function Home() {
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isJoinPrivateRoomModalOpen, setIsJoinPrivateRoomModalOpen] = useState(false);
+  const [joinRoomError, setJoinRoomError] = useState('');
 
   const handleCreateRoom = (roomName: string, movieName: string, isPrivate: boolean) => {
     console.log('Creating room:', { roomName, movieName, isPrivate });
-    // Here you would typically handle the room creation logic,
-    // e.g., making an API call to your backend.
+      if (isPrivate) {
+        const charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let result = '';
+
+        for (let i = 0; i < 6; i++) {
+          const randomIndex = Math.floor(Math.random() * charSet.length);
+          result += charSet[randomIndex];
+        }
+
+        console.log('Private room code:', result); 
+        navigate(`/room/${roomName}?code=${result}`);
+      } else {
+        navigate(`/room/${roomName}`);
+      }
+
+      // backend logic here
+
     setIsModalOpen(false);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const handleJoinPrivateRoom = (roomCode: string) => {
+    
+    roomCode = roomCode.trim().toUpperCase();
+    
+    if (roomCode.length !== 6) {
+      setJoinRoomError('Invalid room code. Please enter a valid 6-character code.');
+      return;
+    } else if (!/^[A-Z0-9]{6}$/.test(roomCode)) {
+      setJoinRoomError('Room code can only contain uppercase letters and numbers.');
+      return;
+    }
+    
+    // backend logic here - need something which can validate the room code and return room data
+    
+    setIsJoinPrivateRoomModalOpen(false);
   };
 
   return (
@@ -34,12 +64,12 @@ function Home() {
         <Link to="/" className="home-nav-brand">drinkmilk.tv</Link>
         
         <div className="home-nav-actions">
-                  <button onClick={() => setIsJoinPrivateRoomModalOpen(true)} className="btn btn-secondary btn-sm">Join Private Room</button>
+                  <button onClick={() => {
+                    setJoinRoomError('');
+                    setIsJoinPrivateRoomModalOpen(true);
+                  }} className="btn btn-secondary btn-sm">Join Private Room</button>
                   <button onClick={() => setIsModalOpen(true)} className="btn btn-primary btn-sm">+ Create Room</button>
-        </div>
-
-      
-      
+        </div> 
       </nav>
 
       <main className="home-main">
@@ -70,17 +100,17 @@ function Home() {
 
       {isModalOpen && (
         <CreateRoomModal
-          onClose={handleCloseModal}
+          onClose={() => setIsModalOpen(false)}
           onCreateRoom={handleCreateRoom}
         />
       )}
 
       {isJoinPrivateRoomModalOpen && (
         <JoinPrivateRoomModal
+          error={joinRoomError}
           onClose={() => setIsJoinPrivateRoomModalOpen(false)}
           onJoinRoom={(roomCode: string) => {
-            console.log('Joining private room:', roomCode);
-            setIsJoinPrivateRoomModalOpen(false);
+            handleJoinPrivateRoom(roomCode);
           }}
         />
       )}

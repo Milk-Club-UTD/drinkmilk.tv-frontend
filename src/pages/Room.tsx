@@ -22,7 +22,7 @@ function Room() {
   return (
     <div className="room">
       <header className="room-header">
-        <Link to="/" className="room-back">&#8592; drinkmilk.tv</Link>
+        <Link to="/home" className="room-back">&#8592; drinkmilk.tv</Link>
         <span className="room-id">Room: {roomId}</span>
       </header>
 

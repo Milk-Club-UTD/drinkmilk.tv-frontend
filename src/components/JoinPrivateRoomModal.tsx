@@ -4,9 +4,10 @@ import './CreateRoomModal.css';
 interface JoinPrivateRoomModalProps {
   onClose: () => void;
   onJoinRoom: (roomCode: string) => void;
+  error?: string;
 } 
 
-const JoinPrivateRoomModal: React.FC<JoinPrivateRoomModalProps> = ({ onClose, onJoinRoom }) => {
+const JoinPrivateRoomModal: React.FC<JoinPrivateRoomModalProps> = ({ onClose, onJoinRoom, error }) => {
     const [roomCode, setRoomCode] = useState('');
 
 
@@ -32,6 +33,9 @@ const JoinPrivateRoomModal: React.FC<JoinPrivateRoomModalProps> = ({ onClose, on
                             placeholder="Enter room code"
                             required
                         />
+
+                        <div className="error" hidden={!error}>{error}</div>
+
                     </div>
                     <div className="modal-actions">
                         <button type="button" onClick={onClose} className="cancel-btn">

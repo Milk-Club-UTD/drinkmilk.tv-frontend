@@ -20,6 +20,11 @@
     max-width: 400px;
     color: #fff;
   }
+
+  .error {
+    color: #ff4d4f;
+    font-size: 0.875rem;
+  }
   
   .modal-content h2 {
     margin-top: 0;
