@@ -13,35 +13,53 @@ const MOCK_ROOMS = [
   { id: 'date-night', title: 'Date Night', host: 'Frank', viewers: 2, movie: 'La La Land' },
 ]
 
+var roomData;
+
 function Home() {
   const navigate = useNavigate();
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [createRoomError, setCreateRoomError] = useState('');
+
   const [isJoinPrivateRoomModalOpen, setIsJoinPrivateRoomModalOpen] = useState(false);
   const [joinRoomError, setJoinRoomError] = useState('');
 
-  const handleCreateRoom = (roomName: string, movieName: string, isPrivate: boolean) => {
+  const handleCreateRoom = async (roomName: string, movieName: string, isPrivate: boolean) => {
+    
     console.log('Creating room:', { roomName, movieName, isPrivate });
+
+    try {
+
+      const response = await fetch("https://imaginary.api/api/createRoom", { // imaginary api call.
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ roomName, movieName, isPrivate })
+      });
+      if (!response.ok) throw new Error('Failed to create room');
+
+      roomData = await response.json();
+
       if (isPrivate) {
-        const charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        let result = '';
-
-        for (let i = 0; i < 6; i++) {
-          const randomIndex = Math.floor(Math.random() * charSet.length);
-          result += charSet[randomIndex];
-        }
-
-        console.log('Private room code:', result); 
-        navigate(`/room/${roomName}?code=${result}`);
+        navigate(`/room/${roomName}?code=${roomData.roomCode}`)
       } else {
         navigate(`/room/${roomName}`);
       }
 
-      // backend logic here
+
 
     setIsModalOpen(false);
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        setCreateRoomError('Request timed out. Please try again.');
+      } else {
+        setCreateRoomError('Failed to create room.');
+      }
+    }
   };
 
-  const handleJoinPrivateRoom = (roomCode: string) => {
+  const handleJoinPrivateRoom = async (roomCode: string) => {
     
     roomCode = roomCode.trim().toUpperCase();
     
@@ -52,10 +70,26 @@ function Home() {
       setJoinRoomError('Room code can only contain uppercase letters and numbers.');
       return;
     }
-    
-    // backend logic here - need something which can validate the room code and return room data
-    
-    setIsJoinPrivateRoomModalOpen(false);
+
+    try {
+      const response = await fetch("https://imaginary.api/api/joinPrivate", { // imaginary api call
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ roomCode })
+      });
+      if (!response.ok) throw new Error('Failed to join room');
+
+      navigate(`/room/${roomCode}`);
+      setIsJoinPrivateRoomModalOpen(false);
+    } catch(error: any) {
+      if (error.name === 'AbortError') {
+        setJoinRoomError('Request timed out. Please try again.');
+      } else {
+        setJoinRoomError('Failed to join room.');
+      }
+    }
   };
 
   return (
@@ -100,6 +134,7 @@ function Home() {
 
       {isModalOpen && (
         <CreateRoomModal
+          error={createRoomError}
           onClose={() => setIsModalOpen(false)}
           onCreateRoom={handleCreateRoom}
         />

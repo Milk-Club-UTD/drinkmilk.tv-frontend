@@ -4,9 +4,10 @@ import './CreateRoomModal.css';
 interface CreateRoomModalProps {
   onClose: () => void;
   onCreateRoom: (roomName: string, movieName: string, isPrivate: boolean) => void;
+  error?: string;
 }
 
-const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose, onCreateRoom }) => {
+const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose, onCreateRoom, error }) => {
   const [roomName, setRoomName] = useState('');
   const [movieName, setMovieName] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
@@ -43,6 +44,7 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose, onCreateRoom
               placeholder="Enter movie name"
               required
             />
+          
           </div>
           <div className="form-group">
             <label>
@@ -53,6 +55,9 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ onClose, onCreateRoom
               />
               Private Room
             </label>
+
+            <div className="error" hidden={!error}>{error}</div>
+          
           </div>
           <div className="modal-actions">
             <button type="button" onClick={onClose} className="cancel-btn">
