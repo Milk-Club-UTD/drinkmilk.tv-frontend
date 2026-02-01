@@ -1,5 +1,7 @@
-import { Link } from 'react-router-dom'
-import './Home.css'
+import { Link } from 'react-router-dom';
+import './Home.css';
+import { useState } from 'react';
+import CreateRoomModal from '../components/CreateRoomModal';
 
 const MOCK_ROOMS = [
   { id: 'movie-night', title: 'Movie Night', host: 'Alice', viewers: 5, movie: 'Interstellar' },
@@ -11,11 +13,25 @@ const MOCK_ROOMS = [
 ]
 
 function Home() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleCreateRoom = (roomName: string, movieName: string, isPrivate: boolean) => {
+    console.log('Creating room:', { roomName, movieName, isPrivate });
+    // Here you would typically handle the room creation logic,
+    // e.g., making an API call to your backend.
+    setIsModalOpen(false);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="home">
       <nav className="home-nav">
         <Link to="/" className="home-nav-brand">drinkmilk.tv</Link>
-        <Link to="/room/new" className="btn btn-primary btn-sm">+ Create Room</Link>
+        <button className="btn btn-secondary btn-sm">Join Private Room</button>
+        <button onClick={() => setIsModalOpen(true)} className="btn btn-primary btn-sm">+ Create Room</button>
       </nav>
 
       <main className="home-main">
@@ -43,6 +59,13 @@ function Home() {
           ))}
         </div>
       </main>
+
+      {isModalOpen && (
+        <CreateRoomModal
+          onClose={handleCloseModal}
+          onCreateRoom={handleCreateRoom}
+        />
+      )}
     </div>
   )
 }
