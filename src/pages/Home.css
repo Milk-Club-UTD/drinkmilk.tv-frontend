@@ -1,0 +1,190 @@
+.home {
+  min-height: 100vh;
+}
+
+/* Nav */
+.home-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.home-nav-brand {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+}
+
+.home-nav-brand:hover {
+  color: #fff;
+}
+
+.btn-sm {
+  padding: 0.5rem 1.2rem;
+  font-size: 0.85rem;
+  border-radius: 8px;
+}
+
+/* Main */
+.home-main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+}
+
+.home-main h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.home-subtitle {
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0.25rem 0 2rem;
+  font-size: 0.95rem;
+}
+
+/* Room grid */
+.room-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.room-card {
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.room-card:hover {
+  border-color: rgba(100, 108, 255, 0.4);
+  transform: translateY(-3px);
+  color: inherit;
+}
+
+/* Card preview / thumbnail area */
+.room-card-preview {
+  height: 140px;
+  background: #000;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.room-card-live {
+  position: absolute;
+  top: 0.6rem;
+  left: 0.6rem;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+/* Card info */
+.room-card-info {
+  padding: 1rem 1.25rem;
+}
+
+.room-card-info h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+}
+
+.room-card-movie {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 0.75rem;
+}
+
+.room-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.room-card-host {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.room-card-viewers {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.viewer-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4ade80;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .home-nav {
+    padding: 0.75rem 1.25rem;
+  }
+
+  .home-main {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .room-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Light mode */
+@media (prefers-color-scheme: light) {
+  .home-nav {
+    border-bottom-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .home-nav-brand {
+    color: #1a1a1a;
+  }
+
+  .home-nav-brand:hover {
+    color: #1a1a1a;
+  }
+
+  .home-subtitle {
+    color: rgba(0, 0, 0, 0.45);
+  }
+
+  .room-card {
+    border-color: rgba(0, 0, 0, 0.08);
+    background: rgba(0, 0, 0, 0.02);
+  }
+
+  .room-card:hover {
+    border-color: rgba(100, 108, 255, 0.4);
+    color: inherit;
+  }
+
+  .room-card-movie {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .room-card-meta {
+    color: rgba(0, 0, 0, 0.4);
+  }
+}
